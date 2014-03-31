@@ -1,25 +1,24 @@
-package com.jameselsey.apps.coin;
-
-import android.app.Activity;
+package com.jameselsey.apps.coin.activity;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
+import android.util.Log;
+import android.view.*;
 import android.widget.TextView;
+import com.jameselsey.apps.coin.R;
+import com.jameselsey.apps.coin.application.BaseActivity;
+import com.jameselsey.apps.coin.domain.Coin;
+import com.jameselsey.apps.coin.service.CoinService;
+
+import javax.inject.Inject;
+import java.util.List;
 
 
-public class MainActivity extends Activity
+public class MainActivity extends BaseActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
@@ -31,6 +30,9 @@ public class MainActivity extends Activity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+
+    @Inject
+    CoinService coinService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,14 @@ public class MainActivity extends Activity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        List<Coin> coins = coinService.getCoins();
+
+        Log.d("Coin", "Coins are " + coins);
     }
 
     @Override
@@ -130,7 +140,7 @@ public class MainActivity extends Activity
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
